@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "bxbnuxqkra";
 $password = "4wzFy9nVKJ";
-$dbname = "project_roadtrip";
+$dbname = "bxbnuxqkra";
 
 $servername = "localhost";
 $username = "root";
