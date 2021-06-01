@@ -14,6 +14,7 @@ $appMemberId = isset($data->appMemberId) ? filterData($data->appMemberId) : "";
 $lat = isset($data->lat) ? filterData($data->lat) : "";
 $long = isset($data->long) ? filterData($data->long) : "";
 $radius = isset($data->radius) ? filterData($data->radius) : "";
+$firebaseKey = isset($data->firebaseKey) ? filterData($data->firebaseKey) : "";
 $currentUserId = null;
 
 $sql = "SELECT * FROM devices_info WHERE id =$uniqueID LIMIT 1";
@@ -36,6 +37,9 @@ if(mysqli_num_rows($result)){ //If id already exists do nothing
     }
 }
 $response["userID"] = $currentUserId;
+
+$sql = "UPDATE devices_info SET firebase_key='$firebaseKey' WHERE id=$currentUserId";
+mysqli_query($con, $sql);
 
 // check for the nearest locations
 

@@ -3,16 +3,9 @@ require 'modules/apiCore.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
-$uniqueID = isset($data->uniqueID) ? filterData($data->uniqueID) : "";
-$lang = isset($data->lang) ? filterData($data->lang) : "";
-$type = isset($data->type) ? filterData($data->type) : "";
-$os_version = isset($data->os_version) ? filterData($data->os_version) : "";
-$carrier = isset($data->carrier) ? filterData($data->carrier) : "";
-$app_version = isset($data->app_version) ? filterData($data->app_version) : "";
-$model = isset($data->model) ? filterData($data->model) : "";
-$appMemberId = isset($data->appMemberId) ? filterData($data->appMemberId) : "";
 
-$sql = "SELECT * FROM devices_info WHERE unique_id =$uniqueID LIMIT 1";
+
+$sql = "SELECT * FROM devices_info";
 $result = mysqli_query($con, $sql);
 if(mysqli_num_rows($result)){ //If id already exists do nothing
     $response["Error"] = false;
