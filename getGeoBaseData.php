@@ -29,7 +29,7 @@ mysqli_query($con, $sql);
 
 // check for the nearest locations
 
-$sql = "SELECT id, title, latitude, longitude, marker_radius, 
+$sql = "SELECT id, title, latitude, longitude, marker_radius, amazon_polly_audio_link_location as audio, opening_sound, closing_sound, categories, country, image, region, story_type, eventdate,
        ( 3959 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($long) ) + sin( radians($lat) ) * sin(radians(latitude)) ) ) AS distance
         FROM wp_audio_info WHERE categories = '$categories' HAVING distance < $radius ORDER BY distance LIMIT 0 , 20";
 //echo $sql;
@@ -53,6 +53,7 @@ if(mysqli_num_rows($res)){
 //     echo "SENT LOCATIONS: ";
 //     print_r($sentArray);
      foreach ($geoLocations as $location){
+
 //         echo "nwe locations: ".$location["id"];
         if(!in_array($location["id"], $sentArray)){
             array_push($newLocations, $location);
@@ -72,6 +73,7 @@ if(mysqli_num_rows($res)){
 //        }
 //     }
      $response["geoLocations"] = $newLocations;
+
 }
 
 
