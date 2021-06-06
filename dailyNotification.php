@@ -1,26 +1,78 @@
 <?php
 require 'modules/apiCore.php';
 
-$data = json_decode(file_get_contents("php://input"));
+//$data = json_decode(file_get_contents("php://input"));
+
+$GLOBALS["response_final"] = array(
+    "Error" => false
+);
 
 
+date_default_timezone_set("Asia/Calcutta");   //India time (GMT+5:30)
+$timestamp = date("d-m-Y");
+$sql = "SELECT * FROM wp_audio_info WHERE eventdate='$timestamp' order by id desc limit 1";
 
-$sql = "SELECT * FROM devices_info";
 $result = mysqli_query($con, $sql);
-if(mysqli_num_rows($result)){ //If id already exists do nothing
-    $response["Error"] = false;
-    $response["Body"]["msg"] = "Device info already exists on server.";
-}else{ // If its new ID, insert data into DB
-    $sql = "INSERT INTO devices_info (lang, type, os_version, carrier, app_version, model, app_member_id) VALUES 
-            ('$lang', '$type', '$os_version', '$carrier', '$app_version', '$model', '$appMemberId')";
-    echo $sql;
-    if(mysqli_query($con, $sql)){
-        $response["Error"] = false;
-        $response["Body"]["msg"] = "New device added successfully";
-    }else{
-        $response["Error"] = true;
-        $response["Body"]["msg"] = mysqli_error($con);
-    }
+if(mysqli_num_rows($result)){
+    $res = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    $res = json_encode($res);
+//    echo $res; exit(); die();
+    send_notification($con, $res);
+}else{
+    $GLOBALS["response_final"]["Error"] = false;
+    $GLOBALS["response_final"]["Body"]["msg"] = "No new data available.";
 }
 
-echo json_encode($response);
+echo json_encode($GLOBALS["response_final"]);
+
+
+function send_notification($con, $message){
+    $sql = "SELECT * from devices_info";
+    $query = mysqli_query($con, $sql);
+    $tokens = array();
+    while($row = mysqli_fetch_array($query)){
+        $tokens[] = $row["firebase_key"];
+    }
+
+//    $tokens = json_encode($tokens);
+
+    $url = 'https://fcm.googleapis.com/fcm/send';
+
+    $server_key = "AAAA1DYKJLE:APA91bG58qqmfMe60znRQpB-13v5ZpFGZrEmi-4CMzJbuEY9IqTbf8sNsghhhWJZLVhX5mKm3Sx_C8UZYFc5KgN0KpQMyqeZ0sRPlop8hztZauTy-cwIdpWD03_P_LxNcd241P1kDh7G";
+    $title = "Notification title";
+    $notification = array('title' => $title, 'body' => $message, 'sound' => 'default', 'badge' => '1');
+//    $arrayToSend = array('to' => $tokens, 'notification' => $notification, 'priority' => 'high');
+//    $fields = json_encode($arrayToSend);
+    $payload = [
+//        'to' => $tokens,
+        'registration_ids' => $tokens,
+        'notification' => [
+            'title' => "Notification form server",
+            'body' => $message
+        ]
+    ];
+
+    $GLOBALS["response_final"]["payload"] = $payload;
+    $fields = $payload;
+    $headers = array(
+        'Authorization:key = ' . $server_key,
+        'Content-Type: application/json'
+    );
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+//    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    $result = curl_exec($ch);
+
+    $GLOBALS["response_final"]["result"] = $result;
+    if ($result === FALSE) {
+        print_r($result);
+        die('Curl failed: ' . curl_error($ch));
+    }
+    curl_close($ch);
+}
