@@ -8,16 +8,18 @@ $GLOBALS["response_final"] = array(
 );
 
 $timestamp = date("d-m-Y");
+
 $explodedDate = explode("-",$timestamp);
 $day = $explodedDate[0];
 $month = $explodedDate[1];
 
 $sql = "SELECT * FROM wp_audio_info WHERE DAY(eventdate) = $day MONTH(eventdate) = $month order by id desc limit 1";
+$sql = "SELECT * FROM wp_audio_info order by id desc limit 1";
 
 $result = mysqli_query($con, $sql);
 if(mysqli_num_rows($result)){
     $res = mysqli_fetch_array($result, MYSQLI_ASSOC);
-    $res = json_encode($res);
+//    $res = json_encode($res);
 //    echo $res; exit(); die();
     send_notification($con, $res);
 }else{
@@ -47,11 +49,9 @@ function send_notification($con, $message){
         'registration_ids' => $tokens,
         'notification' => [
             'title' => "Notification form server",
-            'body' => "Body Of Notification"
+            'body' => "Message Here"
         ],
-    "data" => [
-        $message
-    ]
+    "data" => $message
     ];
 
     $GLOBALS["response_final"]["payload"] = $payload;
