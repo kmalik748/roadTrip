@@ -4,7 +4,7 @@ require 'modules/apiCore.php';
 $data = json_decode(file_get_contents("php://input"));
 
 
-$uniqueID = isset($data->deviceUniqueID) ? filterData($data->deviceUniqueID) : "";
+$uniqueID = isset($data->deviceUniqueID) ? filterData($data->deviceUniqueID) : 0;
 $lang = isset($data->lang) ? filterData($data->lang) : "";
 $type = isset($data->type) ? filterData($data->type) : "";
 $os_version = isset($data->os_version) ? filterData($data->os_version) : "";

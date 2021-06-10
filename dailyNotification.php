@@ -7,10 +7,12 @@ $GLOBALS["response_final"] = array(
     "Error" => false
 );
 
-
-date_default_timezone_set("Asia/Calcutta");   //India time (GMT+5:30)
 $timestamp = date("d-m-Y");
-$sql = "SELECT * FROM wp_audio_info WHERE eventdate='$timestamp' order by id desc limit 1";
+$explodedDate = explode("-",$timestamp);
+$day = $explodedDate[0];
+$month = $explodedDate[1];
+
+$sql = "SELECT * FROM wp_audio_info WHERE DAY(eventdate) = $day MONTH(eventdate) = $month order by id desc limit 1";
 
 $result = mysqli_query($con, $sql);
 if(mysqli_num_rows($result)){
@@ -40,16 +42,16 @@ function send_notification($con, $message){
 
     $server_key = "AAAA1DYKJLE:APA91bG58qqmfMe60znRQpB-13v5ZpFGZrEmi-4CMzJbuEY9IqTbf8sNsghhhWJZLVhX5mKm3Sx_C8UZYFc5KgN0KpQMyqeZ0sRPlop8hztZauTy-cwIdpWD03_P_LxNcd241P1kDh7G";
     $title = "Notification title";
-    $notification = array('title' => $title, 'body' => $message, 'sound' => 'default', 'badge' => '1');
-//    $arrayToSend = array('to' => $tokens, 'notification' => $notification, 'priority' => 'high');
-//    $fields = json_encode($arrayToSend);
     $payload = [
 //        'to' => $tokens,
         'registration_ids' => $tokens,
         'notification' => [
             'title' => "Notification form server",
-            'body' => $message
-        ]
+            'body' => "Body Of Notification"
+        ],
+    "data" => [
+        $message
+    ]
     ];
 
     $GLOBALS["response_final"]["payload"] = $payload;
