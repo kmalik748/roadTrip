@@ -2,6 +2,8 @@
 require 'modules/apiCore.php';
 
 $data = json_decode(file_get_contents("php://input"));
+echo $data; exit(); die();
+
 
 $uniqueID = isset($data->uniqueID) ? filterData($data->uniqueID) : "";
 $lat = isset($data->lat) ? filterData($data->lat) : "";
@@ -12,13 +14,14 @@ $categories = isset($data->categories ) ? filterData($data->categories ) : "";
 $development = isset($data->developmntPhase ) ? filterData($data->developmntPhase ) : "";
 $currentUserId = null;
 
-$sql = "SELECT * FROM devices_info WHERE id =$uniqueID LIMIT 1";
+$sql = "SELECT * FROM devices_info WHERE id =$uniqueID";
 $result = mysqli_query($con, $sql);
 if(mysqli_num_rows($result)){ //If id already exists do nothing
     $res = mysqli_query($con, $sql);
     $row = mysqli_fetch_array($res);
     $currentUserId = $row["id"];
-}else{ // If its not found
+}
+if(mysqli_num_rows($result)<=0 && $development!="yes"){ // If its not found
     $response["Error"] = true;
     $response["Info"]["msg"] = "Device is not registered!";
     echo json_encode($response); exit(); die();
