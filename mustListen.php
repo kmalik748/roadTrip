@@ -12,7 +12,7 @@ if(mysqli_num_rows($res)){
     mysqli_free_result($res);
     $response["geoLocations"] = $geoLocations;
 }else{
-    $response["msg"] = "No data for the today's date";
+    $response["msg"] = "No data for the specified type";
 }
 
 echo json_encode($response);
