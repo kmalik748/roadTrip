@@ -30,6 +30,7 @@ if(mysqli_num_rows($result)<=0 && $development!="yes"){ // If its not found
 }
 $response["userID"] = $currentUserId;
 
+
 $sql = "UPDATE devices_info SET firebase_key='$firebaseKey' WHERE id=$currentUserId";
 mysqli_query($con, $sql);
 
@@ -41,6 +42,7 @@ if($development=="yes"){
     $res = mysqli_query($con, $sql);
     $geoLocations = mysqli_fetch_all($res, MYSQLI_ASSOC);
     foreach ($geoLocations as $location){
+        $location = array_map('utf8_encode', $location);
         array_push($response["geoLocations"], $location);
     }
     echo json_encode($response); exit(); die();

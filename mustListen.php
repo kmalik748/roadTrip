@@ -10,8 +10,14 @@ $res = mysqli_query($con, $sql);
 if(mysqli_num_rows($res)){
     $geoLocations = mysqli_fetch_all($res, MYSQLI_ASSOC);
     mysqli_free_result($res);
-    $response["geoLocations"] = $geoLocations;
+    $response["geoLocations"] = array();
+    foreach ($geoLocations as $location){
+    	//echo "here";
+        $location = array_map('utf8_encode', $location);
+        array_push($response["geoLocations"], $location);
+    }
 }else{
+    $response["Error"] = true;
     $response["msg"] = "No data for the specified type";
 }
 
