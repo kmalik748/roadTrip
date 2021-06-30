@@ -10,8 +10,7 @@ $month = $explodedDate[1];
 $storyType ="HistoryToday";
 $type="HistoryToday";
 //$sql = "SELECT * FROM wp_audio_info WHERE story_type = $storyType AND DAY(eventdate) = $day AND MONTH(eventdate) = $month";
-$sql = "SELECT id, title, latitude, longitude, marker_radius, amazon_polly_audio_link_location as audio, opening_sound, closing_sound, categories, country, image, region, story_type, eventdate
-    FROM wp_audio_info WHERE story_type = '$type'  LIMIT 0 , 20";
+$sql = "SELECT id, title, latitude, longitude, marker_radius, amazon_polly_audio_link_location as audio, opening_sound, closing_sound, categories, country, image, region, story_type, eventdate FROM wp_audio_info WHERE story_type = '$type'  LIMIT 0 , 20";
 
 $res = mysqli_query($con, $sql);
 if(mysqli_num_rows($res)){
