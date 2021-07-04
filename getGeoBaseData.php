@@ -45,8 +45,8 @@ if($development=="yes"){
 }else{
     // check for the nearest locations
     $sql = "SELECT id, title, latitude, longitude, marker_radius, amazon_polly_audio_link_location as audio, opening_sound, closing_sound, categories, country, image, region, story_type, eventdate,
-       ( 3959 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($long) ) + sin( radians($lat) ) * sin(radians(latitude)) ) ) AS distance
-        FROM wp_audio_info WHERE post_status='publish' AND categories IN ($tags) HAVING distance < $radius ORDER BY distance LIMIT 0 , 20";
+       ( 3959 * acos( cos( radians($lat) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians($long) ) + sin( radians($lat) ) * sin(radians(latitude)) ) ) AS distance, duration
+        FROM wp_audio_info WHERE story_type='$story_type' AND categories IN ($tags) HAVING distance < $radius ORDER BY distance LIMIT 0 , 20";
     $res = mysqli_query($con, $sql);
     if(mysqli_num_rows($res)){
         $geoLocations = mysqli_fetch_all($res, MYSQLI_ASSOC);
